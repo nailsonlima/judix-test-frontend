@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Input from '@/components/ui/Input';
 import { useAuth } from '@/context/AuthContext';
 import { Lock } from 'lucide-react';
@@ -14,9 +15,16 @@ type LoginFormInputs = {
 };
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
   const {
     register,
     handleSubmit,
