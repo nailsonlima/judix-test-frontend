@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend – Judix Full Stack Assignment
 
-## Getting Started
+This is the frontend application for the Judix Full Stack Developer Intern assignment.
 
-First, run the development server:
+## Tech Stack
+- Next.js (App Router)
+- React
+- TailwindCSS
+- Axios
+- React Hook Form
 
-```bash
+## Features
+- User authentication (register/login/logout)
+- Protected dashboard routes
+- Task management (CRUD)
+- Search and filter functionality
+- Responsive UI
+
+## Environment Variables
+Create a `.env.local` file:
+
+
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+Running Locally
+
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Authentication Flow
+User logs in or registers
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+JWT token is stored securely
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Protected routes validate session via backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Invalid or expired tokens trigger logout
 
-## Learn More
+UI/UX
+Fully responsive design
 
-To learn more about Next.js, take a look at the following resources:
+Loading and error states
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Clean and minimal interface
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Scalability Notes
+Centralized API client
 
-## Deploy on Vercel
+Clear separation of concerns
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Easily extendable with React Query or server components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deployment
+Deployed using Vercel (free tier) and integrated with the backend hosted on Render.
