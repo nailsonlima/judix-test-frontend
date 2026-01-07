@@ -14,7 +14,7 @@ export function useTodos() {
   useEffect(() => {
     const storedTodos = localStorage.getItem('taskzen_todos');
     if (storedTodos) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line
       setTodos(JSON.parse(storedTodos));
     }
   }, []);

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import Input from '@/components/ui/Input';
@@ -14,17 +14,26 @@ type LoginFormInputs = {
 };
 
 export default function LoginPage() {
-  const { login } = useAuth(); // Using mock auth
+  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
-  const onSubmit = (data: LoginFormInputs) => {
-    // Simulate API call and login
-    console.log('Login Data:', data);
-    login(data.email.split('@')[0]); // Use email prefix as name
+  const onSubmit = async (data: LoginFormInputs) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await login(data.email, data.password);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to login. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -39,6 +48,11 @@ export default function LoginPage() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-200 p-3 rounded-md text-sm text-center">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <Input
               label="Email address"
@@ -98,12 +112,13 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <Lock className="h-5 w-5 text-blue-500 group-hover:text-blue-400" aria-hidden="true" />
               </span>
-              Sign in
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
         </form>

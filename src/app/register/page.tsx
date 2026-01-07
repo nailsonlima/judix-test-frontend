@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import Input from '@/components/ui/Input';
@@ -15,7 +15,10 @@ type RegisterFormInputs = {
 };
 
 export default function RegisterPage() {
-  const { login } = useAuth(); // Using mock auth
+  const { register: registerAuth } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -23,10 +26,17 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterFormInputs>();
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log('Register Data:', data);
-    // Simulate API call and login
-    login(data.name);
+  const onSubmit = async (data: RegisterFormInputs) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await registerAuth(data.name, data.email, data.password);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to register. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const password = watch('password');
@@ -43,6 +53,11 @@ export default function RegisterPage() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-200 p-3 rounded-md text-sm text-center">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <Input
               label="Full Name"
@@ -102,12 +117,13 @@ export default function RegisterPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <UserPlus className="h-5 w-5 text-blue-500 group-hover:text-blue-400" aria-hidden="true" />
               </span>
-              Sign up
+              {isLoading ? 'Creating account...' : 'Sign up'}
             </button>
           </div>
         </form>
