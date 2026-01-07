@@ -26,6 +26,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const logout = React.useCallback(() => {
+    setUser(null);
+    localStorage.removeItem('taskzen_token');
+    router.push('/');
+  }, [router]);
+
   useEffect(() => {
     const token = localStorage.getItem('taskzen_token');
     if (token) {
@@ -34,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(response.data);
         })
         .catch(() => {
-          localStorage.removeItem('taskzen_token');
+          logout();
         })
         .finally(() => {
           setIsLoading(false);
@@ -43,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // eslint-disable-next-line
       setIsLoading(false);
     }
-  }, []);
+  }, [logout]);
 
   const login = async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });
@@ -59,12 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('taskzen_token', token);
     setUser(user);
     router.push('/dashboard');
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('taskzen_token');
-    router.push('/');
   };
 
   return (

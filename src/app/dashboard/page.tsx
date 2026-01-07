@@ -8,18 +8,24 @@ import { LogOut, Plus, ListTodo } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const { todos, addTodo, toggleTodo, deleteTodo, filter, setFilter, activeCount } = useTodos();
   const [newTodo, setNewTodo] = useState('');
   const router = useRouter();
 
-  // Redirect if not logged in (basic client-side protection)
-  // In a real app, middleware or server-side checks would be better.
   React.useEffect(() => {
-    if (!localStorage.getItem('taskzen_user')) {
+    if (!isLoading && !user) {
       router.push('/login');
     }
-  }, [router]);
+  }, [isLoading, user, router]);
+
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,10 +34,6 @@ export default function DashboardPage() {
       setNewTodo('');
     }
   };
-
-  if (!user && typeof window !== 'undefined' && !localStorage.getItem('taskzen_user')) {
-      return null; // Or loading spinner
-  }
 
   const displayName = user?.name || 'User';
 
